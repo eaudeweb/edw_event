@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Basic module file for EDW Event module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\edw_event_agenda\Form\MeetingAgendaForm;
+use Drupal\edw_event_agenda\Form\MeetingDocumentForm;
+use Drupal\edw_event\Form\MeetingSectionForm;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function edw_event_form_entity_clone_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!$node instanceof NodeInterface || $node->bundle() != 'event') {
+    return;
+  }
+
+  /** @var \Drupal\edw_event\Services\MeetingService $meetingService */
+  $meetingService = \Drupal::service('edw_event.meeting.service');
+  $sections = $meetingService->getAllMeetingSections($node, FALSE);
+  if (!$sections) {
+    return;
+  }
+
+  $form['meeting_sections'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Clone meeting sections.'),
+    '#description' => t('If the cloned entity should be saved with all tabs related.'),
+    '#default_value' => TRUE,
+  ];
+
+  $form['meeting_sections_status'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Select what sections you want to clone as published'),
+    '#states' => [
+      'visible' => [
+        ':input[name="meeting_sections"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  foreach ($sections as $section) {
+    $form['meeting_sections_status'][$section->id()] = [
+      '#type' => 'checkbox',
+      '#title' => $section->label(),
+      '#default_value' => FALSE,
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function edw_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $classResolver = \Drupal::service('class_resolver');
+  if (\Drupal::moduleHandler()->moduleExists('edw_event_agenda')) {
+    if ($form_id == 'media_document_add_form') {
+      $classResolver->getInstanceFromDefinition(MeetingDocumentForm::class)
+        ->alter($form, $form_state);
+    }
+
+    if ($form_id == 'taxonomy_term_event_agendas_form') {
+      $classResolver->getInstanceFromDefinition(MeetingAgendaForm::class)
+        ->alter($form, $form_state);
+    }
+  }
+
+  if ($form_id == 'node_event_section_form') {
+    $classResolver->getInstanceFromDefinition(MeetingSectionForm::class)
+      ->alter($form, $form_state);
+  }
+}
+
+/** 
+ * Implements hook_ENTITY_TYPE_delete(). 
+ */
+function edw_event_node_delete(NodeInterface $node) {
+  if ($node->bundle() != 'event') {
+    return;
+  }
+  
+  /** @var \Drupal\edw_event\Services\MeetingService $meetingService */
+  $meetingService = \Drupal::service('edw_event.meeting.service');
+  $entities = $meetingService->getAllMeetingSections($node, FALSE);
+  foreach ($entities as $entity) {
+    $entity->delete();
+    \Drupal::logger('node')->info(t('The @entity-type %label has been deleted.', [
+      '@entity-type' => $entity->getEntityType()->getSingularLabel(),
+      '%label' => $entity->label() ?? $entity->id(),
+    ]));
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function edw_event_node_update(NodeInterface $node) {
+  if ($node->isNew() || empty($node->original) || $node->bundle() != 'event') {
+    return;
+  }
+  /** @var \Drupal\node\Entity\Node $originalNode */
+  $originalNode = $node->original;
+  $oldNumber = $originalNode->get('field_number')->value;
+  $newNumber = $node->get('field_number')->value;
+  if ($oldNumber === $newNumber) {
+    return;
+  }
+  
+  /** @var \Drupal\edw_event\Services\MeetingService $meetingService */
+  $meetingService = \Drupal::service('edw_event.meeting.service');
+  $nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
+  $entities = $meetingService->getAllMeetingSections($node, FALSE);
+  foreach ($entities as $entity) {
+    $nodeStorage->save($entity);
+  }
+}
