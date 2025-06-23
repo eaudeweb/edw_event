@@ -1,6 +1,6 @@
 {
-    "name": "eaudeweb/edw_modules",
-    "description": "A collection of custom modules",
+    "name": "eaudeweb/edw_event",
+    "description": "Enable the event module to provide content managers with the ability to manage events within Drupal",
     "type": "drupal-module",
     "authors": [
         {
@@ -9,5 +9,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "drupal/draggableviews": "^2.1",
+        "drupal/time_field": "^2.1",
+        "drupal/group": "^3.3"
+    }
 }

@@ -1,11 +1,22 @@
-# Events module
+# EDW Events module
 
 Enable the event module to provide content managers with the ability to manage events within Drupal.
 
 ## Installation
 
-1. Install the `edw_modules` suite using composer as instructed in the main module documentation
-2. Enable the module using drush: `drush en edw_event`
+1. Add the following snippet to the `repositories` section of your `composer.json` file:
+```
+{
+    "type": "git",
+    "url": "https://github.com/eaudeweb/edw_event.git"
+}
+```
+
+2. Run
+   ```composer require eaudeweb/edw_event:^1.0```
+
+3. Enable the module:
+   ``drush en edw_event``
 
 ## Architecture
 
@@ -84,3 +95,16 @@ check the README located inside the module.
 
 Daily schedule can be used to break down multi-day events in activities taking place daily on a certain time. Content
 managers can assign room numbers where activities take place.
+
+## Other EDW modules:
+* [edw_blocks](https://github.com/eaudeweb/edw_blocks)
+* [edw_decoupled](https://github.com/eaudeweb/edw_decoupled)
+* [edw_demo_data](https://github.com/eaudeweb/edw_demo_data)
+* [edw_document](https://github.com/eaudeweb/edw_document)
+* [edw_group](https://github.com/eaudeweb/edw_group)
+* [edw_media](https://github.com/eaudeweb/edw_media)
+* [edw_paragraphs](https://github.com/eaudeweb/edw_paragraphs)
+* [edw_person](https://github.com/eaudeweb/edw_person)
+* [edw_project](https://github.com/eaudeweb/edw_project)
+* [edw_themes](https://github.com/eaudeweb/edw_themes)
+* [edw_utilities](https://github.com/eaudeweb/edw_utilities)

@@ -4,5 +4,5 @@ package: Eau de Web
 type: module
 core_version_requirement: ^9.4 || ^10 || ^11
 dependencies:
-  - eaudeweb:edw_event
+  - edw_event:edw_event
   - drupal:group
