@@ -3,3 +3,5 @@ description: Enable the event module to provide content managers with the abilit
 package: Eau de Web
 type: module
 core_version_requirement: ^9.2 || ^10 || ^11  || ^11
+dependencies:
+  - drupal:entity_clone
