@@ -11,6 +11,7 @@
     "minimum-stability": "dev",
     "require": {
         "drupal/draggableviews": "^2.1",
+        "drupal/entity_clone": "^2.1@beta",
         "drupal/time_field": "^2.1",
         "drupal/group": "^3.3"
     }

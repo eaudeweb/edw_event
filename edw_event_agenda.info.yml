@@ -5,4 +5,5 @@ type: module
 core_version_requirement: ^9.4 || ^10 || ^11
 dependencies:
   - drupal:draggableviews
+  - drupal:entity_clone
   - edw_event:edw_event
