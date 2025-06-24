@@ -5,11 +5,7 @@ dependencies:
     - field.storage.node.field_event_venue
     - node.type.event
   module:
-    - allowed_formats
     - text
-third_party_settings:
-  allowed_formats:
-    allowed_formats: {  }
 id: node.event.field_event_venue
 field_name: field_event_venue
 entity_type: node
@@ -20,7 +16,5 @@ required: false
 translatable: no
 default_value: {  }
 default_value_callback: ''
-settings:
-  allowed_formats:
-    - plain_text
+settings: {  }
 field_type: text_long
