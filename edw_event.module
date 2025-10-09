@@ -84,6 +84,10 @@ function edw_event_node_delete(NodeInterface $node) {
   if ($node->bundle() != 'event') {
     return;
   }
+
+  if (!$node->hasField('field_number')) {
+    return;
+  }
   
   /** @var \Drupal\edw_event\Services\MeetingService $meetingService */
   $meetingService = \Drupal::service('edw_event.meeting.service');
@@ -104,6 +108,11 @@ function edw_event_node_update(NodeInterface $node) {
   if ($node->isNew() || empty($node->original) || $node->bundle() != 'event') {
     return;
   }
+
+  if (!$node->hasField('field_number')) {
+    return;
+  }
+
   /** @var \Drupal\node\Entity\Node $originalNode */
   $originalNode = $node->original;
   $oldNumber = $originalNode->get('field_number')->value;
